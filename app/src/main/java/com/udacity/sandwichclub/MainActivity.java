@@ -1,38 +1,116 @@
 package com.udacity.sandwichclub;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.view.Menu;
+import android.view.MenuItem;
+
+import com.udacity.sandwichclub.adapters.SandwichAdapter;
+import com.udacity.sandwichclub.model.Sandwich;
+import com.udacity.sandwichclub.utils.JsonUtils;
+import com.udacity.sandwichclub.utils.SharedPrefsUtils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
+
+    private List<Sandwich> mSandwichList;
+    private RecyclerView mRecyclerView;
+    private SandwichAdapter mSandwichAdapter;
+    private RecyclerView.LayoutManager mLayoutManger;
+    private Menu mMenu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        mRecyclerView = findViewById(R.id.sandwichesRV);
+        mRecyclerView.setHasFixedSize(true);
+
+        prepareSandwichItems();
+        mSandwichAdapter = new SandwichAdapter(mSandwichList);
+        setUpRecyclerView();
+    }
+
+    private void setUpRecyclerView() {
+        int defaultLayout = SharedPrefsUtils.getItemType(this);
+        if (defaultLayout == SharedPrefsUtils.GRID_LAYOUT_ID) {
+            setGridLayout();
+        } else {
+            setListLayout();
+        }
+        mRecyclerView.setAdapter(mSandwichAdapter);
+    }
+
+
+    private void prepareSandwichItems() {
+        String[] sandwichList = getResources().getStringArray(R.array.sandwich_details);
         String[] sandwiches = getResources().getStringArray(R.array.sandwich_names);
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_list_item_1, sandwiches);
-
-        // Simplification: Using a ListView instead of a RecyclerView
-        ListView listView = findViewById(R.id.sandwiches_listview);
-        listView.setAdapter(adapter);
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                launchDetailActivity(position);
-            }
-        });
+        mSandwichList = new ArrayList<>();
+        for (int i = 0; i < sandwiches.length; i++) {
+            String json = sandwichList[i];
+            Sandwich sandwich = JsonUtils.parseSandwichJson(json);
+            mSandwichList.add(sandwich);
+        }
     }
 
-    private void launchDetailActivity(int position) {
-        Intent intent = new Intent(this, DetailActivity.class);
-        intent.putExtra(DetailActivity.EXTRA_POSITION, position);
-        startActivity(intent);
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main, menu);
+        mMenu = menu;
+        updateMenu();
+        return true;
     }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        switch (id) {
+            case R.id.action_list_item:
+                setListLayout();
+                break;
+            case R.id.action_grid_item:
+                setGridLayout();
+                break;
+            default:
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void setGridLayout() {
+        SharedPrefsUtils.saveItemType(this, SharedPrefsUtils.GRID_LAYOUT_ID);
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2);
+        mRecyclerView.setLayoutManager(gridLayoutManager);
+        updateMenu();
+    }
+
+    private void setListLayout() {
+        SharedPrefsUtils.saveItemType(this, SharedPrefsUtils.LIST_LAYOUT_ID);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        mRecyclerView.setLayoutManager(linearLayoutManager);
+        updateMenu();
+    }
+
+    private void updateMenu() {
+        if (mMenu == null) {
+            return;
+        }
+        int defaultLayout = SharedPrefsUtils.getItemType(this);
+        if (defaultLayout == SharedPrefsUtils.GRID_LAYOUT_ID) {
+            mMenu.findItem(R.id.action_grid_item).setVisible(false);
+            mMenu.findItem(R.id.action_list_item).setVisible(true);
+        } else {
+            mMenu.findItem(R.id.action_grid_item).setVisible(true);
+            mMenu.findItem(R.id.action_list_item).setVisible(false);
+        }
+    }
+
+
 }

@@ -1,7 +1,5 @@
 package com.udacity.sandwichclub.utils;
 
-import android.widget.Toast;
-
 import com.udacity.sandwichclub.model.Sandwich;
 
 import org.json.JSONArray;

@@ -12,6 +12,9 @@
 
     <!-- Error messages-->
     <string name="detail_error_message">Sandwich data not available</string>
+    <string name="sandwich_name">Sandwich Name</string>
+    <string name="listview">ListView</string>
+    <string name="grid_view">Grid View</string>
 
     <string-array name="sandwich_names">
         <item>Ham and cheese sandwich</item>
