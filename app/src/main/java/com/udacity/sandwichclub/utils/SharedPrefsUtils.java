@@ -6,7 +6,7 @@ import android.preference.PreferenceManager;
 
 public class SharedPrefsUtils {
 
-    public static final String CURRENT_LAYOUT_ID = "CURRENT_LAYOUT_ID";
+    private static final String CURRENT_LAYOUT_ID = "CURRENT_LAYOUT_ID";
     public static final int LIST_LAYOUT_ID = 1;
     public static final int GRID_LAYOUT_ID = 2;
 
@@ -14,12 +14,11 @@ public class SharedPrefsUtils {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = preferences.edit();
         editor.putInt(CURRENT_LAYOUT_ID, selectedLayout);
-        editor.commit();
+        editor.apply();
     }
 
     public static int getItemType(Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        int layoutId = preferences.getInt(CURRENT_LAYOUT_ID, LIST_LAYOUT_ID);
-        return layoutId;
+        return preferences.getInt(CURRENT_LAYOUT_ID, LIST_LAYOUT_ID);
     }
 }

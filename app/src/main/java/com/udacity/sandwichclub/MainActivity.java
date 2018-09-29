@@ -1,5 +1,6 @@
 package com.udacity.sandwichclub;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
@@ -7,6 +8,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.animation.AnimationUtils;
+import android.view.animation.LayoutAnimationController;
 
 import com.udacity.sandwichclub.adapters.SandwichAdapter;
 import com.udacity.sandwichclub.model.Sandwich;
@@ -21,7 +24,6 @@ public class MainActivity extends AppCompatActivity {
     private List<Sandwich> mSandwichList;
     private RecyclerView mRecyclerView;
     private SandwichAdapter mSandwichAdapter;
-    private RecyclerView.LayoutManager mLayoutManger;
     private Menu mMenu;
 
     @Override
@@ -45,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
             setListLayout();
         }
         mRecyclerView.setAdapter(mSandwichAdapter);
+        runLayoutAnimation();
     }
 
 
@@ -110,6 +113,14 @@ public class MainActivity extends AppCompatActivity {
             mMenu.findItem(R.id.action_grid_item).setVisible(true);
             mMenu.findItem(R.id.action_list_item).setVisible(false);
         }
+    }
+
+    private void runLayoutAnimation(  ) {
+        final Context context = mRecyclerView.getContext();
+        final LayoutAnimationController controller = AnimationUtils.loadLayoutAnimation(context, R.anim.layout_animation_fall_down);
+        mRecyclerView.setLayoutAnimation(controller);
+        mRecyclerView.getAdapter().notifyDataSetChanged();
+        mRecyclerView.scheduleLayoutAnimation();
     }
 
 

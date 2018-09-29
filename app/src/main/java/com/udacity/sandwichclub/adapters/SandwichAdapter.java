@@ -1,6 +1,5 @@
 package com.udacity.sandwichclub.adapters;
 
-import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -19,7 +18,7 @@ import java.util.List;
 
 public class SandwichAdapter extends RecyclerView.Adapter<SandwichAdapter.ViewHolder> {
 
-    private List<Sandwich> mSandwichList;
+    private final List<Sandwich> mSandwichList;
 
     public SandwichAdapter(List<Sandwich> sandwichList) {
         mSandwichList = sandwichList;
@@ -29,8 +28,7 @@ public class SandwichAdapter extends RecyclerView.Adapter<SandwichAdapter.ViewHo
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_card_view, viewGroup, false);
-        ViewHolder sandwichHolder = new ViewHolder(view);
-        return sandwichHolder;
+        return new ViewHolder(view);
     }
 
     @Override
@@ -53,7 +51,7 @@ public class SandwichAdapter extends RecyclerView.Adapter<SandwichAdapter.ViewHo
         TextView sandwichName;
         ImageView sandwichImage;
 
-        public ViewHolder(@NonNull View itemView) {
+        ViewHolder(@NonNull View itemView) {
             super(itemView);
             sandwichName = itemView.findViewById(R.id.sandwichName);
             sandwichImage = itemView.findViewById(R.id.sandwichImage);
